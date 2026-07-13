@@ -4,19 +4,22 @@
     <title>Book Management System</title>
 </head>
 <body>
-    <h2>Book Management System</h2>
-    <form>
-        <label>Title</label>
-        <input type="text" name="title"><br><br>
-        <label>Author</label>
-        <input type="text" name="author"><br><br>
-        <label>ISBN</label>
-        <input type="text" name="isbn"><br><br>
-        <label>Publication Date</label>
-        <input type="date" name="publicationDate"><br><br>
-        <label>Genre</label>
-        <input type="text" name="genre"><br><br>
-        <input type="submit" value="Add Book">
-    </form>
+<h2>Book Management System</h2>
+<form id="bms">
+<label>Title</label>
+<input type="text" id="title" name="title"><br><br>
+<label>Author</label>
+<input type="text" id="author" name="author"><br><br>
+<label>ISBN</label>
+<input type="text" id="isbn" name="isbn"><br><br>
+<label>Publication Date</label>
+<input type="date" id="publicationdate" name="publicationdate"><br><br>
+<label>Genre</label>
+<input type="text" id="genre" name="genre"><br><br>
+<button id="bms-btn">Add Book</button>
+</form>
+<h2>Registered Books</h2>
+<ol id="bookList"></ol>
+<script src="script.js"></script>
 </body>
 </html>
