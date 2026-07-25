@@ -118,6 +118,22 @@ function deleteBook(index) {
   document.getElementById("bms").reset();
   display();
 }
+function sortBooks(type){
+    for(let i=0;i<books.length-1;i++){
+        let min=i;
+        for(let j=i+1;j<books.length;j++){
+            if(books[j].title.toLowerCase() <
+               books[min].title.toLowerCase()){
+                min=j;
+            }
+        }
+        let temp=books[i];
+        books[i]=books[min];
+        books[min]=temp;
+    }
+    display();
+
+}
 async function fetchBooks() {
     try {
         const response = await fetch("https://openlibrary.org/search.json?q=javascript");
@@ -146,11 +162,14 @@ function searchBook(keyword, callback) {
     const result = books.filter((book) =>
       book.title.toLowerCase().includes(keyword.toLowerCase()),
     );
+
     callback(result);
   }, 1000);
 }
+
 document.getElementById("searchBtn").addEventListener("click", () => {
   const keyword = document.getElementById("searchBook").value;
+
   searchBook(keyword, function (result) {
     if (result.length === 0) {
       document.getElementById("result").innerHTML = "No Book Found";
@@ -164,7 +183,17 @@ document.getElementById("searchBtn").addEventListener("click", () => {
         output += escapeHTML(book.publicationDate) + "<br>";
         output += escapeHTML(book.genre) + "<br><br>";
       });
+
       document.getElementById("result").innerHTML = output;
     }
   });
+});
+document.getElementById("sortBtn").addEventListener("click", function (e) {
+    e.preventDefault();
+    const type = document.getElementById("sortBooks").value;
+    if (type === "") {
+        alert("Please select a sorting option.");
+        return;
+    }
+    sortBooks(type);
 });
