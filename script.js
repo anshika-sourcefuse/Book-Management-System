@@ -1,27 +1,56 @@
-let books = [];
-let edit = -1;
-const age = (date) => {
-  return Math.max(0, new Date().getFullYear() - new Date(date).getFullYear());
-};
-const getCategory = (genre) => {
-  genre = genre.toLowerCase();
+class BaseBook {
+  constructor(title, author, isbn, publicationDate, genre) {
+    this.title = title;
+    this.author = author;
+    this.isbn = isbn;
+    this.publicationDate = publicationDate;
+    this.genre = genre;
+  }
+  getAge() {
+    return Math.max(0,new Date().getFullYear() -new Date(this.publicationDate).getFullYear());
+  }
+  getCategory() {
+    const genre = this.genre.toLowerCase();
 
-  if (genre.includes("fiction")) return "Fiction";
-  if (genre.includes("history")) return "History";
-  if (genre.includes("romance")) return "Romance";
-  if (genre.includes("thriller")) return "Thriller";
-  if (genre.includes("autobiography")) return "Autobiography";
-  return "General";
-};
-function simulateServer(book) {
+    if (genre.includes("fiction")) return "Fiction";
+    if (genre.includes("history")) return "History";
+    if (genre.includes("romance")) return "Romance";
+    if (genre.includes("thriller")) return "Thriller";
+    if (genre.includes("autobiography")) return "Autobiography";
+    return "General";
+  }
+}
+class PrintedBook extends BaseBook {
+  constructor(title, author, isbn, publicationDate, genre) {
+    super(title, author, isbn, publicationDate, genre);
+    this.type = "Printed Book";
+  }
+  getDiscountPrice(price) {
+    return price * 0.9;
+  }
+}
+class EBook extends BaseBook {
+  constructor(title, author, isbn, publicationDate, genre) {
+    super(title, author, isbn, publicationDate, genre);
+    this.type = "E-Book";
+  }
+  getDiscountPrice(price) {
+    return price * 0.5;
+  }
+}
+class BookManager {
+  constructor() {
+    this.books = [];
+    this.edit = -1;
+  }
+  simulateServer(book) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const duplicate = books.some(
+      const duplicate = this.books.some(
         (b, index) =>
-          index !== edit &&
+          index !== this.edit &&
           b.title.toLowerCase() === book.title.toLowerCase()
       );
-
       if (duplicate) {
         reject("Book with this title already exists.");
       } else {
@@ -30,111 +59,61 @@ function simulateServer(book) {
     }, 2000);
   });
 }
-function escapeHTML(text) {
-  return String(text)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-const display = () => {
+display() {
   const list = document.getElementById("bookList");
   let output = "";
-  books.forEach((book, index) => {
+  this.books.forEach((book, index) => {
     output += `
-        <li>
-        <b>Title:</b> ${escapeHTML(book.title)}<br>
-        <b>Author:</b> ${escapeHTML(book.author)}<br>
-        <b>ISBN:</b> ${escapeHTML(book.isbn)}<br>
-        <b>Publication Date:</b> ${escapeHTML(book.publicationDate)}<br>
-        <b>Genre:</b> ${escapeHTML(book.genre)}<br>
-        <b>Age:</b> ${age(book.publicationDate)} Years<br>
-        <b>Category:</b> ${getCategory(book.genre)}<br><br>
-        <button onclick="editBook(${index})">Edit</button>
-        <button onclick="deleteBook(${index})">Delete</button>
-        <hr>
-        </li>
-        `;
+      <li>
+      <b>Title:</b> ${escapeHTML(book.title)}<br>
+      <b>Author:</b> ${escapeHTML(book.author)}<br>
+      <b>ISBN:</b> ${escapeHTML(book.isbn)}<br>
+      <b>Publication Date:</b> ${escapeHTML(book.publicationDate)}<br>
+      <b>Genre:</b> ${escapeHTML(book.genre)}<br>
+      <b>Age:</b> ${book.getAge()} Years<br>
+      <b>Category:</b> ${book.getCategory()}<br>
+      <b>Type:</b> ${book.type}<br><br>
+      <button onclick="manager.editBook(${index})">Edit</button>
+      <button onclick="manager.deleteBook(${index})">Delete</button>
+      <hr>
+      </li>
+    `;
   });
   list.innerHTML = output;
-};
-document.getElementById("bms").addEventListener("submit", function (e) {
-  e.preventDefault();
-  const title = document.getElementById("title").value;
-  const author = document.getElementById("author").value;
-  const isbn = document.getElementById("isbn").value;
-  const publicationDate = document.getElementById("publicationDate").value;
-  const genre = document.getElementById("genre").value;
-  if (
-    title === "" ||
-    author === "" ||
-    isbn === "" ||
-    publicationDate === "" ||
-    genre === ""
-  ) {
-    alert("All fields are required.");
-    return;
-  }
-  if (isNaN(isbn)) {
-    alert("ISBN must be numeric.");
-    return;
-  }
-  const book = {
-    title,
-    author,
-    isbn,
-    publicationDate,
-    genre,
-  };
-  simulateServer(book)
-    .then((message) => {
-      alert(message);
-      if (edit === -1) {
-        books.push(book);
-      } else {
-        books[edit] = book;
-        edit = -1;
-      }
-      display();
-      document.getElementById("bms").reset();
-    })
-    .catch((error) => {
-      alert(error);
-    });
-});
-function editBook(index) {
-  edit = index;
-  document.getElementById("title").value = books[index].title;
-  document.getElementById("author").value = books[index].author;
-  document.getElementById("isbn").value = books[index].isbn;
+}
+editBook(index) {
+  this.edit = index;
+  document.getElementById("title").value = this.books[index].title;
+  document.getElementById("author").value = this.books[index].author;
+  document.getElementById("isbn").value = this.books[index].isbn;
   document.getElementById("publicationDate").value =
-    books[index].publicationDate;
-  document.getElementById("genre").value = books[index].genre;
+    this.books[index].publicationDate;
+  document.getElementById("genre").value = this.books[index].genre;
 }
-function deleteBook(index) {
-  books.splice(index, 1);
-  edit = -1;
+deleteBook(index) {
+  this.books.splice(index, 1);
+  this.edit = -1;
   document.getElementById("bms").reset();
-  display();
+  this.display();
 }
-function sortBooks(type){
-    for(let i=0;i<books.length-1;i++){
-        let min=i;
-        for(let j=i+1;j<books.length;j++){
-            if(books[j].title.toLowerCase() <
-               books[min].title.toLowerCase()){
-                min=j;
-            }
-        }
-        let temp=books[i];
-        books[i]=books[min];
-        books[min]=temp;
+sortBooks(type) {
+  for (let i = 0; i < this.books.length - 1; i++) {
+    let min = i;
+    for (let j = i + 1; j < this.books.length; j++) {
+      if (
+        this.books[j].title.toLowerCase() <
+        this.books[min].title.toLowerCase()
+      ) {
+        min = j;
+      }
     }
-    display();
-
+    let temp = this.books[i];
+    this.books[i] = this.books[min];
+    this.books[min] = temp;
+  }
+  this.display();
 }
-async function fetchBooks() {
+async fetchBooks() {
     try {
         const response = await fetch("https://openlibrary.org/search.json?q=javascript");
         if (!response.ok) {
@@ -156,26 +135,77 @@ async function fetchBooks() {
         document.getElementById("result").textContent = error.message;
     }
 }
-document.getElementById("fetchBtn").addEventListener("click", fetchBooks);
-function searchBook(keyword, callback) {
+searchBook(keyword, callback) {
   setTimeout(() => {
-    const result = books.filter((book) =>
-      book.title.toLowerCase().includes(keyword.toLowerCase()),
+    const result = this.books.filter(book =>
+      book.title.toLowerCase().includes(keyword.toLowerCase())
     );
-
     callback(result);
   }, 1000);
 }
-
+}
+const bookManager = new BookManager();
+function escapeHTML(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+document.getElementById("bms").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const title = document.getElementById("title").value;
+  const author = document.getElementById("author").value;
+  const isbn = document.getElementById("isbn").value;
+  const publicationDate = document.getElementById("publicationDate").value;
+  const genre = document.getElementById("genre").value;
+  if (
+    title === "" ||
+    author === "" ||
+    isbn === "" ||
+    publicationDate === "" ||
+    genre === ""
+  ) {
+    alert("All fields are required.");
+    return;
+  }
+  if (isNaN(isbn)) {
+    alert("ISBN must be numeric.");
+    return;
+  }
+  const book = new PrintedBook(
+  title,
+  author,
+  isbn,
+  publicationDate,
+  genre
+);
+  manager.simulateServer(book)
+    .then((message) => {
+      alert(message);
+      if (manager.edit === -1) {
+    manager.books.push(book);
+}
+else {
+    manager.books[manager.edit] = book;
+    manager.edit = -1;
+}
+      manager.display();
+      document.getElementById("bms").reset();
+    })
+    .catch((error) => {
+      alert(error);
+    });
+});
+document.getElementById("fetchBtn").addEventListener("click", () => manager.fetchBooks());
 document.getElementById("searchBtn").addEventListener("click", () => {
   const keyword = document.getElementById("searchBook").value;
-
-  searchBook(keyword, function (result) {
+  manager.searchBook(keyword, function (result) {
     if (result.length === 0) {
       document.getElementById("result").innerHTML = "No Book Found";
     } else {
       let output = "";
-
       result.forEach((book) => {
         output += escapeHTML(book.title) + "<br>";
         output += escapeHTML(book.author) + "<br>";
@@ -183,7 +213,6 @@ document.getElementById("searchBtn").addEventListener("click", () => {
         output += escapeHTML(book.publicationDate) + "<br>";
         output += escapeHTML(book.genre) + "<br><br>";
       });
-
       document.getElementById("result").innerHTML = output;
     }
   });
@@ -195,5 +224,5 @@ document.getElementById("sortBtn").addEventListener("click", function (e) {
         alert("Please select a sorting option.");
         return;
     }
-    sortBooks(type);
+    manager.sortBooks(type);
 });
