@@ -43,7 +43,16 @@ function logAction(
   };
   return descriptor;
 }
-abstract class BaseBook implements Book {
+interface Ageable {
+    getAge(): number;
+}
+interface Categorisable {
+    getCategory(): string;
+}
+interface Discountable {
+    getDiscountPrice(): number;
+}
+abstract class BaseBook implements Book, Ageable, Categorisable, Discountable {
   title: string;
   author: Author;
   isbn: string;
@@ -82,7 +91,8 @@ abstract class BaseBook implements Book {
     if (genre.includes("autobiography")) return "Autobiography";
     return "General";
   }
-  abstract getDiscountPrice(price: number): number;
+  getDiscountPrice(): number {
+    return this.price;}
 }
 class PrintedBook extends BaseBook {
   constructor(
@@ -96,9 +106,9 @@ class PrintedBook extends BaseBook {
     super(title, author, isbn, publicationDate, genre, price);
     this.type = "Printed Book";
   }
-  getDiscountPrice(price: number): number {
-    return price * 0.9;
-  }
+  override getDiscountPrice(): number {
+    return this.price * 0.9;
+}
 }
 class EBook extends BaseBook {
   constructor(
@@ -112,13 +122,59 @@ class EBook extends BaseBook {
     super(title, author, isbn, publicationDate, genre, price);
     this.type = "E-Book";
   }
-  getDiscountPrice(price: number): number {
-    return price * 0.5;
+  override getDiscountPrice(): number {
+    return this.price * 0.5;
+  }
+}
+interface Validator {
+  validate(
+    title: string,
+    author: string,
+    isbn: string,
+    publicationDate: string,
+    genre: string,
+    price: number
+  ): boolean;
+}
+class BookValidator implements Validator {
+  validate(
+    title: string,
+    author: string,
+    isbn: string,
+    publicationDate: string,
+    genre: string,
+    price: number
+  ): boolean {
+    if (
+      title.trim() === "" ||
+      author.trim() === "" ||
+      isbn.trim() === "" ||
+      publicationDate.trim() === "" ||
+      genre.trim() === ""
+    ) {
+      alert("All fields are required.");
+      return false;
+    }
+    if (isNaN(Number(isbn))) {
+      alert("ISBN must be numeric.");
+      return false;
+    }
+    if (isNaN(price) || price <= 0) {
+      alert("Price must be a positive number.");
+      return false;
+    }
+    return true;
   }
 }
 class BookManager<T extends BaseBook> {
   books: T[] = [];
   edit: number = -1;
+  validator: Validator;
+constructor(validator: Validator) {
+    this.validator = validator;
+    this.books = [];
+    this.edit = -1;
+}
   simulateServer(book: T): Promise<void> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -149,7 +205,7 @@ class BookManager<T extends BaseBook> {
         <p><b>Category:</b> ${book.getCategory()}</p>
         <p><b>Type:</b> ${book.type}</p>
         <p><b>Price:</b> ${book.price}</p>
-        <p><b>Discounted Price:</b> ${book.getDiscountPrice(book.price)}</p>
+        <p><b>Discounted Price:</b> ${book.getDiscountPrice()}</p>
         <button data-action="edit" data-index="${index}">Edit</button>
         <button data-action="delete" data-index="${index}">Delete</button>
         </li>
@@ -232,8 +288,8 @@ class BookManager<T extends BaseBook> {
     }
   }
 }
-
-const manager = new BookManager<BaseBook>();
+const validator = new BookValidator();
+const manager = new BookManager<BaseBook>(validator);
 
 (document.getElementById("bms") as HTMLFormElement).addEventListener("submit", function (e: Event) {
   e.preventDefault();
@@ -244,33 +300,36 @@ const manager = new BookManager<BaseBook>();
   const publicationDate = (document.getElementById("publicationDate") as HTMLInputElement).value;
   const genre = (document.getElementById("genre") as HTMLSelectElement).value;
   const bookType = (document.getElementById("bookType") as HTMLSelectElement).value;
-
-  if (
-    title === "" ||
-    author === "" ||
-    isbn === "" ||
-    price === "" ||
-    publicationDate === "" ||
-    genre === "" ||
-    bookType === ""
-  ) {
-    alert("All fields are required.");
-    return;
-  }
-  if (isNaN(Number(isbn))) {
-    alert("ISBN must be numeric.");
-    return;
-  }
-  if (isNaN(Number(price))) {
-    alert("Price must be numeric.");
-    return;
-  }
-
-  const book: BaseBook =
-    bookType === "ebook"
-      ? new EBook(title, author, isbn, publicationDate, genre, Number(price))
-      : new PrintedBook(title, author, isbn, publicationDate, genre, Number(price));
-
+ if (
+  !manager.validator.validate(
+    title,
+    author,
+    isbn,
+    publicationDate,
+    genre,
+    Number(price)
+  )
+) {
+  return;
+}
+const book: BaseBook =
+  bookType === "ebook"
+    ? new EBook(
+        title,
+        author,
+        isbn,
+        publicationDate,
+        genre,
+        Number(price)
+      )
+    : new PrintedBook(
+        title,
+        author,
+        isbn,
+        publicationDate,
+        genre,
+        Number(price)
+      );
   manager
     .simulateServer(book)
     .then(() => {
@@ -284,9 +343,7 @@ const manager = new BookManager<BaseBook>();
       alert(error);
     });
 });
-
 document.getElementById("fetchBtn")!.addEventListener("click", () => manager.fetchBooks());
-
 document.getElementById("bookList")!.addEventListener("click", function (e: Event) {
   const target = e.target as HTMLElement;
   const button = target.closest("button[data-action]") as HTMLElement | null;
@@ -318,7 +375,6 @@ document.getElementById("searchBtn")!.addEventListener("click", () => {
     }
   });
 });
-
 document.getElementById("sortBtn")!.addEventListener("click", function (e: Event) {
   e.preventDefault();
   const type = (document.getElementById("sortBooks") as HTMLSelectElement).value;
