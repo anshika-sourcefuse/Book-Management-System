@@ -42,20 +42,20 @@ const display = () => {
   const list = document.getElementById("bookList");
   let output = "";
   books.forEach((book, index) => {
-    output += `
-        <li>
-        <b>Title:</b> ${escapeHTML(book.title)}<br>
-        <b>Author:</b> ${escapeHTML(book.author)}<br>
-        <b>ISBN:</b> ${escapeHTML(book.isbn)}<br>
-        <b>Publication Date:</b> ${escapeHTML(book.publicationDate)}<br>
-        <b>Genre:</b> ${escapeHTML(book.genre)}<br>
-        <b>Age:</b> ${age(book.publicationDate)} Years<br>
-        <b>Category:</b> ${getCategory(book.genre)}<br><br>
-        <button onclick="editBook(${index})">Edit</button>
-        <button onclick="deleteBook(${index})">Delete</button>
-        <hr>
-        </li>
-        `;
+output += `
+<li>
+    <p><b>Title:</b> ${escapeHTML(book.title)}</p>
+    <p><b>Author:</b> ${escapeHTML(book.author)}</p>
+    <p><b>ISBN:</b> ${escapeHTML(book.isbn)}</p>
+    <p><b>Publication Date:</b> ${escapeHTML(book.publicationDate)}</p>
+    <p><b>Genre:</b> ${escapeHTML(book.genre)}</p>
+    <p><b>Age:</b> ${age(book.publicationDate)} Years</p>
+    <p><b>Category:</b> ${getCategory(book.genre)}</p>
+
+    <button onclick="editBook(${index})">Edit</button>
+    <button onclick="deleteBook(${index})">Delete</button>
+</li>
+`;
   });
   list.innerHTML = output;
 };
@@ -118,21 +118,41 @@ function deleteBook(index) {
   document.getElementById("bms").reset();
   display();
 }
-function sortBooks(type){
-    for(let i=0;i<books.length-1;i++){
-        let min=i;
-        for(let j=i+1;j<books.length;j++){
-            if(books[j].title.toLowerCase() <
-               books[min].title.toLowerCase()){
-                min=j;
+function sortBooks(type) {
+    let key;
+
+    if (type === "title") {
+        key = "title";
+    } else if (type === "genre") {
+        key = "genre";
+    } else if (type === "date") {
+        key = "publicationDate";
+    } else {
+        return;
+    }
+
+    for (let i = 0; i < books.length - 1; i++) {
+        let min = i;
+
+        for (let j = i + 1; j < books.length; j++) {
+            if (
+                String(books[j][key]).toLowerCase() <
+                String(books[min][key]).toLowerCase()
+            ) {
+                min = j;
             }
         }
-        let temp=books[i];
-        books[i]=books[min];
-        books[min]=temp;
-    }
-    display();
 
+        if (min !== i) {
+            const temp = books[i];
+            books[i] = books[min];
+            books[min] = temp;
+        }
+    }
+
+   edit = -1;
+document.getElementById("bms").reset();
+display();
 }
 async function fetchBooks() {
     try {
