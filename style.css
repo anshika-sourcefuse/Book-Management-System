@@ -1,0 +1,168 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+body{
+    background:#eef4ff;
+    padding:30px;
+}
+.container{
+    max-width:1100px;
+    margin:0 auto;
+    padding:20px;
+}
+
+h1{
+   .main-heading{
+    text-align:center;
+    color:#1d4ed8;
+    font-size:48px;
+    margin-bottom:30px;
+   }
+}
+h2{
+   .section-heading{
+    text-align:center;
+    color:#1d4ed8;
+    font-size:48px;
+    margin-bottom:30px;
+}
+}
+form{
+    max-width:750px;
+    margin:20px auto;
+    background:#ffffff;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.12);
+}
+label{
+    display:block;
+    margin-bottom:8px;
+    font-size:24px;
+    font-weight:bold;
+    color:#1e293b;
+}
+input,
+select{
+    width:100%;
+    padding:14px 16px;
+    margin-bottom:18px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    font-size:18px;
+    transition:0.3s;
+}
+input:focus,
+select:focus{
+    outline:none;
+    border-color:#2563eb;
+    box-shadow:0 0 8px rgba(37,99,235,.3);
+}
+button{
+    background-color:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 24px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:17px;
+    font-weight:bold;
+    margin:10px 10px 10px 0;
+    transition:.3s;
+}
+button:hover{
+    background-color:#1d4ed8;
+    transform:translateY(-2px);
+}
+#bmsBtn{
+    width:100%;
+}
+#searchBook{
+    max-width:1100px;
+    display:block;
+    margin:15px auto;
+}
+#searchBtn,
+#sortBtn,
+#fetchBtn{
+    display:inline-block;
+}
+#result{
+    max-width:1100px;
+    margin:25px auto;
+    background:#ffffff;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+    line-height:1.8;
+}
+#bookList{
+    max-width:1100px;
+    margin:30px auto;
+}
+#bookList li{
+    list-style:none;
+    background:#ffffff;
+    padding:22px;
+    margin-bottom:20px;
+    border-radius:12px;
+    box-shadow:0 6px 16px rgba(0,0,0,.12);
+    line-height:1.8;
+}
+#bookList b{
+    color:#1e293b;
+}
+hr{
+    margin-top:18px;
+    border:none;
+    border-top:1px solid #d1d5db;
+}
+@media(max-width:768px){
+    body{
+        padding:15px;
+    }
+    h2{
+        font-size:34px;
+    }
+    form{
+        width:100%;
+        padding:20px;
+    }
+    input,
+    select,
+    button{
+        width:100%;
+        font-size:16px;
+    }
+    button{
+        margin-bottom:12px;
+    }
+    label{
+        font-size:18px;
+    }
+    #bookList li{
+        padding:18px;
+    }
+}
+@media(max-width:480px){
+    body{
+        padding:10px;
+    }
+    h2{
+        font-size:28px;
+    }
+    form{
+        padding:15px;
+    }
+    input,
+    select,
+    button{
+        font-size:15px;
+    }
+    label{
+        font-size:16px;
+    }
+}

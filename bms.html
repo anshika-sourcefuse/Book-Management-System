@@ -1,34 +1,62 @@
-<!doctype html>
-<html>
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Management System</title>
-  </head>
-  <body>
-    <h2>Book Management System</h2>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+ <h1 class="main-heading">Book Management System</h1>
     <form id="bms">
-      <label>Title</label>
-      <input type="text" id="title" name="title" /><br /><br />
-      <label>Author</label>
-      <input type="text" id="author" name="author" /><br /><br />
-      <label>ISBN</label>
-      <input type="text" id="isbn" name="isbn" /><br /><br />
-      <label>Publication Date</label>
-      <input
-        type="date"
-        id="publicationDate"
-        name="publicationDate"
-      /><br /><br />
-      <label>Genre</label>
-      <input type="text" id="genre" name="genre" /><br /><br />
-      <button id="bms-btn">Add Book</button>
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title">
+        <label for="author">Author</label>
+        <input type="text" id="author" name="author">
+        <label for="isbn">ISBN</label>
+        <input type="text" id="isbn" name="isbn">
+       <label for="publicationDate">Publication Date</label>
+        <input type="date" id="publicationDate" name="publicationDate">
+      <label for="genre">Genre</label>
+        <select id="genre" name="genre">
+            <option value="">Select Genre</option>
+            <option>Fiction</option>
+            <option>History</option>
+            <option>Romance</option>
+            <option>Thriller</option>
+            <option>Autobiography</option>
+        </select>
+        <button id="bmsBtn">
+            Add Book
+        </button>
     </form>
-    <label>Search Book</label>
-    <input type="text" id="searchBook" />
-    <button id="searchBtn">Search</button>
-    <button id="fetchBtn">Sample Books</button>
-    <h3 id="result"></h3>
-    <h2>Registered Books</h2>
+    <div class="tools">
+        <div>
+        <label for="searchBook">Search Book</label>
+            <input type="text" id="searchBook" placeholder="Enter title...">
+            <button id="searchBtn">Search</button>
+        </div>
+        <div>
+         <label for="sortBooks">Sort Books</label>
+            <select id="sortBooks">
+                <option value="">Select</option>
+                <option value="title">Title</option>
+                <option value="genre">Genre</option>
+                <option value="date">Publication Date</option>
+            </select>
+            <button id="sortBtn">Sort Books</button>
+        </div>
+        <div>
+            <button id="fetchBtn">
+                Fetch Sample Books
+            </button>
+        </div>
+    </div>
+    <div id="result"></div>
+   <h2 class="section-heading">Registered Books</h2>
     <ol id="bookList"></ol>
-    <script src="script.js"></script>
-  </body>
+</div>
+<script src="script.js"></script>
+</body>
 </html>
