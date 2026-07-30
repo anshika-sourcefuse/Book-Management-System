@@ -16,6 +16,8 @@
         <input type="text" id="author" name="author">
         <label for="isbn">ISBN</label>
         <input type="text" id="isbn" name="isbn">
+       <label for="price">Price</label>
+        <input type="text" id="price" name="price">
        <label for="publicationDate">Publication Date</label>
         <input type="date" id="publicationDate" name="publicationDate">
       <label for="genre">Genre</label>
@@ -26,6 +28,12 @@
             <option>Romance</option>
             <option>Thriller</option>
             <option>Autobiography</option>
+        </select>
+      <label for="bookType">Book Type</label>
+        <select id="bookType" name="bookType">
+            <option value="">Select Book Type</option>
+            <option value="printed">Printed Book</option>
+            <option value="ebook">E-Book</option>
         </select>
         <button id="bmsBtn">
             Add Book

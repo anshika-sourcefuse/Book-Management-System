@@ -13,17 +13,13 @@ body{
     margin:0 auto;
     padding:20px;
 }
-
-h1{
-   .main-heading{
+.main-heading{
     text-align:center;
     color:#1d4ed8;
     font-size:48px;
     margin-bottom:30px;
-   }
 }
-h2{
-   .section-heading{
+.section-heading{
     text-align:center;
     color:#1d4ed8;
     font-size:48px;
@@ -124,7 +120,7 @@ hr{
     body{
         padding:15px;
     }
-    h2{
+    .section-heading{
         font-size:34px;
     }
     form{
@@ -151,7 +147,7 @@ hr{
     body{
         padding:10px;
     }
-    h2{
+    .section-heading{
         font-size:28px;
     }
     form{
